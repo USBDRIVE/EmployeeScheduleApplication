@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewData["Title"] = "Schedules";
+    bool isSignedOn = User.Identity.IsAuthenticated;
+}
+<h1>Schedules</h1>
+
+@if (isSignedOn)
+{
+    <br />
+    <p>you're signed in</p>
+
+}
+else{
+    <br />
+    <p>you're not signed in</p>
+}

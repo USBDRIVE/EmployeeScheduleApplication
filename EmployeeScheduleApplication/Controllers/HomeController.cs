@@ -22,6 +22,10 @@ namespace EmployeeScheduleApplication.Controllers
         {
             return View();
         }
+        public IActionResult Schedules()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
