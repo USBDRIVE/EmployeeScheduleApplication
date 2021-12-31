@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using EmployeeScheduleApplication.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmployeeScheduleApplication.Data
@@ -9,5 +10,6 @@ namespace EmployeeScheduleApplication.Data
             : base(options)
         {
         }
+        public virtual DbSet<Employee> Employee { get; set; }
     }
 }
