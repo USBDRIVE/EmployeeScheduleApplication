@@ -8,28 +8,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeScheduleApplication.Data;
 using EmployeeScheduleApplication.Models;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace EmployeeScheduleApplication.Controllers
 {
-    public class EmployeeController : Controller
+    public class ShiftController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EmployeeController(ApplicationDbContext context)
+        public ShiftController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Employee
+        // GET: Shift
         public async Task<IActionResult> Index()
         {
-            //get all employees with owner id of logged in user and put that in a list ( ToListAsync() ).
-            return View(await _context.Employee.ToListAsync());
+            return View(await _context.Shift.ToListAsync());
         }
 
-        // GET: Employee/Details/5
+        // GET: Shift/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -37,49 +34,40 @@ namespace EmployeeScheduleApplication.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employee
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
-            if (employee == null)
+            var shift = await _context.Shift
+                .FirstOrDefaultAsync(m => m.ShiftId == id);
+            if (shift == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(shift);
         }
 
-        // GET: Employee/Create
+        // GET: Shift/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Employee/Create
+        // POST: Shift/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,EmployeeName")] Employee employee)
+        public async Task<IActionResult> Create([Bind("ShiftId,StartTime,EndTime")] Shift shift)
         {
-            employee.EmployeeId = Guid.NewGuid();
-            string OwnerIdClaimString = User.FindFirst(ClaimTypes.NameIdentifier).ToString();
-            //parsing the string
-            string OwnerId = OwnerIdClaimString.Substring(69); // doesn't work
-            
-            employee.OwnerId = OwnerId.Trim();
-            //if (ModelState.IsValid)
-            //{
-
-            //    _context.Add(employee);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            _context.Add(employee);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-            return View(employee);
+            if (ModelState.IsValid)
+            {
+                shift.ShiftId = Guid.NewGuid();
+                _context.Add(shift);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(shift);
         }
 
-        // GET: Employee/Edit/5
+        // GET: Shift/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -87,22 +75,22 @@ namespace EmployeeScheduleApplication.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employee.FindAsync(id);
-            if (employee == null)
+            var shift = await _context.Shift.FindAsync(id);
+            if (shift == null)
             {
                 return NotFound();
             }
-            return View(employee);
+            return View(shift);
         }
 
-        // POST: Employee/Edit/5
+        // POST: Shift/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("EmployeeId,EmployeeName")] Employee employee)
+        public async Task<IActionResult> Edit(Guid id, [Bind("ShiftId,StartTime,EndTime")] Shift shift)
         {
-            if (id != employee.EmployeeId)
+            if (id != shift.ShiftId)
             {
                 return NotFound();
             }
@@ -111,12 +99,12 @@ namespace EmployeeScheduleApplication.Controllers
             {
                 try
                 {
-                    _context.Update(employee);
+                    _context.Update(shift);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeExists(employee.EmployeeId))
+                    if (!ShiftExists(shift.ShiftId))
                     {
                         return NotFound();
                     }
@@ -127,10 +115,10 @@ namespace EmployeeScheduleApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(employee);
+            return View(shift);
         }
 
-        // GET: Employee/Delete/5
+        // GET: Shift/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -138,30 +126,30 @@ namespace EmployeeScheduleApplication.Controllers
                 return NotFound();
             }
 
-            var employee = await _context.Employee
-                .FirstOrDefaultAsync(m => m.EmployeeId == id);
-            if (employee == null)
+            var shift = await _context.Shift
+                .FirstOrDefaultAsync(m => m.ShiftId == id);
+            if (shift == null)
             {
                 return NotFound();
             }
 
-            return View(employee);
+            return View(shift);
         }
 
-        // POST: Employee/Delete/5
+        // POST: Shift/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var employee = await _context.Employee.FindAsync(id);
-            _context.Employee.Remove(employee);
+            var shift = await _context.Shift.FindAsync(id);
+            _context.Shift.Remove(shift);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeExists(Guid id)
+        private bool ShiftExists(Guid id)
         {
-            return _context.Employee.Any(e => e.EmployeeId == id);
+            return _context.Shift.Any(e => e.ShiftId == id);
         }
     }
 }
