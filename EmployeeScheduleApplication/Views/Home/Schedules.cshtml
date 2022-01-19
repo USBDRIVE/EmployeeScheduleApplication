@@ -1,14 +1,16 @@
-﻿
+﻿@using System.Security.Claims
+
 @{
     ViewData["Title"] = "Schedules";
     bool isSignedOn = User.Identity.IsAuthenticated;
+    string x = User.FindFirstValue(ClaimTypes.NameIdentifier);//.Substring(69)
 }
 <h1>Schedules</h1>
 
 @if (isSignedOn)
 {
     <br />
-    <p>you're signed in</p>
+    <p>you're signed in @x</p>
 
 }
 else{

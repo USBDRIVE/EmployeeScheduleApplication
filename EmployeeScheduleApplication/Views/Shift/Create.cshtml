@@ -1,7 +1,21 @@
 ﻿@model EmployeeScheduleApplication.Models.Shift
+@using Microsoft.AspNetCore.Mvc.Rendering;
 
 @{
     ViewData["Title"] = "Create";
+    List<Employee> employeeList = (List<Employee>) ViewData["employeeList"];
+    //make selectList to for dropdownlist.
+     IEnumerable<SelectListItem> selectList =
+                from e in employeeList
+                select new SelectListItem
+                {
+                    Selected = true,
+                    Text = e.EmployeeName,
+                    Value = e.EmployeeId.ToString()
+
+                };
+            
+    
 }
 
 <h1>Create</h1>
@@ -21,6 +35,18 @@
                 <label asp-for="EndTime" class="control-label"></label>
                 <input asp-for="EndTime" class="form-control" />
                 <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+            <div>
+                
+                <b>Select Employee to assaign a shift too</b>
+                <!--
+                    https://stackoverflow.com/questions/27901175/how-to-get-dropdownlist-selectedvalue-in-controller-in-mvc
+                    https://social.msdn.microsoft.com/Forums/en-US/6894c2d6-ab14-4edd-8a9d-3b4508398f2f/get-selected-value-from-htmldropdownlistfor-in-controller?forum=aspgettingstarted
+                    i could try a foreach and 
+                -->
+                @Html.DropDownListFor( model => model.Employee, selectList) 
+              
+                
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
