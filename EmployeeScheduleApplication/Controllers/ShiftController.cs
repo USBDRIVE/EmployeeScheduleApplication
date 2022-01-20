@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EmployeeScheduleApplication.Data;
 using EmployeeScheduleApplication.Models;
+using System.Security.Claims;
 
 namespace EmployeeScheduleApplication.Controllers
 {
@@ -45,8 +46,15 @@ namespace EmployeeScheduleApplication.Controllers
         }
 
         // GET: Shift/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            //get list of employees
+            EmployeeController employeeControllers = new EmployeeController(_context);
+            var employeeList = await employeeControllers.GetEmployees(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            ViewData["employeeList"] = employeeList;
+           
+
+
             return View();
         }
 
@@ -55,16 +63,27 @@ namespace EmployeeScheduleApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ShiftId,StartTime,EndTime")] Shift shift)
+        public async Task<IActionResult> Create([Bind("ShiftId,StartTime,EndTime")] Shift shift, IFormCollection form)
         {
-            if (ModelState.IsValid)
-            {
-                shift.ShiftId = Guid.NewGuid();
-                _context.Add(shift);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(shift);
+            string employeeId = form["Employee"]; // returns emplooyee id as string
+            //query database to get employee where id = employeeID
+            //if (ModelState.IsValid)
+            //{
+
+            //    shift.ShiftId = Guid.NewGuid();
+            //    _context.Add(shift);
+            //    await _context.SaveChangesAsync();
+            //    return RedirectToAction(nameof(Index));
+            //}
+            //return View(shift);
+            shift.ShiftId = Guid.NewGuid();
+            //database query
+            var employee = await _context.Employee
+                .FirstOrDefaultAsync(m => m.EmployeeId == Guid.Parse(employeeId));
+            shift.Employee = employee;
+            _context.Add(shift);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Shift/Edit/5

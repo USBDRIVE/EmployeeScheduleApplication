@@ -10,21 +10,68 @@ using EmployeeScheduleApplication.Data;
 using EmployeeScheduleApplication.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using IdentityModel;
 
 namespace EmployeeScheduleApplication.Controllers
 {
+    //test account username is j@j.com
     public class EmployeeController : Controller
     {
+
+        
+       //sstatic String claimsUserString = System.Security.Claims.ClaimTypes.NameIdentifier.ToString().Substring(69);
+       //public static String currUserId = claimsUserString.TrimStart().TrimEnd();
+       
+
+        //public String currUserId = claimsUserString.Substring(69); later1
+
+
+
         private readonly ApplicationDbContext _context;
 
         public EmployeeController(ApplicationDbContext context)
         {
             _context = context;
         }
+        public String GetCurrentUserId() 
+        {
+            //if (User.Identity.IsAuthenticated) // need a differnt way of checking if user authenticated, or get rid of checking?
+            //{
+                return User.FindFirstValue(ClaimTypes.NameIdentifier);
+               
+            //}
+            //else
+            //{
+            //    return null;
+            //}
+            
+            //if userIdString comeback null that means user is not logged in
+        }
+        public async Task<List<Employee>> GetEmployees(String userId)
+        {            //get all employees where OwnerId = currUserId
 
+            //await using(var context = _context)
+            //{
+            //    //var query = from em in context.employee
+            //    //            where em.ownerid == curruserid
+            //    //            select em;
+
+            //    //list<employee> employees = query.tolist<employee>(); // if this dosent work try to list async
+
+            //    ViewData["employees"] = employees;
+            //}
+            var employees = await _context.Employee
+                .Where(e => e.OwnerId == userId)
+                .ToListAsync();
+            return employees;
+           
+            
+        }
         // GET: Employee
         public async Task<IActionResult> Index()
         {
+           
+            ViewData["employees"] = await GetEmployees(GetCurrentUserId());
             //get all employees with owner id of logged in user and put that in a list ( ToListAsync() ).
             return View(await _context.Employee.ToListAsync());
         }
@@ -61,11 +108,9 @@ namespace EmployeeScheduleApplication.Controllers
         public async Task<IActionResult> Create([Bind("EmployeeId,EmployeeName")] Employee employee)
         {
             employee.EmployeeId = Guid.NewGuid();
-            string OwnerIdClaimString = User.FindFirst(ClaimTypes.NameIdentifier).ToString();
-            //parsing the string
-            string OwnerId = OwnerIdClaimString.Substring(69); // doesn't work
             
-            employee.OwnerId = OwnerId.Trim();
+            
+            employee.OwnerId = GetCurrentUserId();
             //if (ModelState.IsValid)
             //{
 
