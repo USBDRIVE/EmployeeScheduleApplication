@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    List<Shift> shiftList = (List<Shift>)ViewData["shifts"];
 }
 
 <h1>Index</h1>
@@ -22,7 +23,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in shiftList) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.StartTime)
