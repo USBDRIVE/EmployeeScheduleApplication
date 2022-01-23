@@ -20,10 +20,20 @@ namespace EmployeeScheduleApplication.Controllers
         {
             _context = context;
         }
+        public async Task<List<Shift>> GetShifts(String userId)
+        {            
+            var employees = await _context.Shift
+                .Where(e => e.OwnerId == userId)
+                .ToListAsync();
+            return employees;
+             
+
+        }
 
         // GET: Shift
         public async Task<IActionResult> Index()
         {
+            ViewData["shifts"] = await GetShifts(User.FindFirstValue(ClaimTypes.NameIdentifier));
             return View(await _context.Shift.ToListAsync());
         }
 
@@ -81,6 +91,7 @@ namespace EmployeeScheduleApplication.Controllers
             var employee = await _context.Employee
                 .FirstOrDefaultAsync(m => m.EmployeeId == Guid.Parse(employeeId));
             shift.Employee = employee;
+            shift.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _context.Add(shift);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
