@@ -13,5 +13,6 @@ namespace EmployeeScheduleApplication.Data
         }
         public virtual DbSet<Employee> Employee { get; set; }
         public virtual DbSet<Shift> Shift { get; set; }
+        public virtual DbSet<Schedule> Schedule { get; set; }
     }
 }
