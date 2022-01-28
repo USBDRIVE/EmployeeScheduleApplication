@@ -9,30 +9,41 @@ namespace EmployeeScheduleApplication.Controllers
 {
     public class ScheduleController : Controller
     {
-        private static readonly ApplicationDbContext _context;
-        private readonly ApplicationDbContext _context2;
-        
-        ShiftController x = new ShiftController(_context);
-
+        private readonly ApplicationDbContext _context;
         public ScheduleController(ApplicationDbContext context)
         {
-            _context2 = context;
+            _context = context;
         }
-        public async Task<List<Schedule>> GetSchedules(String userId)
+        public async Task<List<Schedule>> GetSchedules(Guid userId)
         {
             var employees = await _context.Schedule
-                .Where(e => e.OwnerId == Guid.Parse(userId))
+                .Where(e => e.OwnerId == userId)
                 .ToListAsync();
             return employees;
 
 
         }
+        public async Task<List<Shift>> GetShifts(Schedule schedule)
+        {
+            List<Shift> shifts = await _context.Shift
+                .Where(e => e.Schedule == schedule)
+                .ToListAsync();
+            return shifts;
+        }
+        public async void updategg(Schedule s, Shift shift)
+        {
+            Schedule n = s;
+            s.Shifts.Append(shift);
+            _context.Update(s);
+            await _context.SaveChangesAsync();
+        }
+
 
         //make a function to add shift to list
         // GET: Schedule
         public async Task<IActionResult> Index()
         {
-            ViewData["schedules"] = await GetSchedules(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            ViewData["schedules"] = await GetSchedules(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             return View(await _context.Schedule.ToListAsync());
         }
 
@@ -134,6 +145,13 @@ namespace EmployeeScheduleApplication.Controllers
         {
             throw new NotImplementedException();
         }
+        //public async Task<IActionResult> Details(Schedule sched)
+        //{
+        //    List<Shift> f  =  await GetShifts(sched);
+        //    ViewBag["h"] = f;
+        //    return View();
+                
+        //}
 
         // GET: Schedule/Delete/5
         public async Task<IActionResult> Delete(Guid? id)

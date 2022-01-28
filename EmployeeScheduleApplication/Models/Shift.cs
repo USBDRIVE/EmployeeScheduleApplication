@@ -13,6 +13,10 @@ namespace EmployeeScheduleApplication.Models
         public Employee Employee { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+
+        [Required]
+        public Schedule Schedule { get; set; }
+
         public string OwnerId { get; set; }
 
     }
