@@ -16,6 +16,7 @@ namespace EmployeeScheduleApplication.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+
         public ShiftController(ApplicationDbContext context)
         {
             _context = context;
@@ -29,6 +30,7 @@ namespace EmployeeScheduleApplication.Controllers
              
 
         }
+        
 
         // GET: Shift
         public async Task<IActionResult> Index()
@@ -60,9 +62,11 @@ namespace EmployeeScheduleApplication.Controllers
         {
             //get list of employees
             EmployeeController employeeControllers = new EmployeeController(_context);
+            ScheduleController scheduleControllers = new ScheduleController(_context);
             var employeeList = await employeeControllers.GetEmployees(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var scheduleList = await scheduleControllers.GetSchedules(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             ViewData["employeeList"] = employeeList;
-           
+            ViewData["scheduleList"] = scheduleList;
 
 
             return View();
@@ -76,25 +80,50 @@ namespace EmployeeScheduleApplication.Controllers
         public async Task<IActionResult> Create([Bind("ShiftId,StartTime,EndTime")] Shift shift, IFormCollection form)
         {
             string employeeId = form["Employee"]; // returns emplooyee id as string
+            string scheduleId = form["Schedule"];
             //query database to get employee where id = employeeID
-            //if (ModelState.IsValid)
+            //public async Task appendShiftToSchedule(Shift shift, Guid scheduleId)
             //{
-
-            //    shift.ShiftId = Guid.NewGuid();
-            //    _context.Add(shift);
+            //    Schedule x = await _context.Schedule
+            //                  .Where(s => s.ScheduleId == scheduleId)
+            //                  .FirstOrDefaultAsync();
+            //    x.Shifts.Append(shift);
             //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
+
             //}
-            //return View(shift);
-            shift.ShiftId = Guid.NewGuid();
-            //database query
+
+            //adding shift to database
             var employee = await _context.Employee
                 .FirstOrDefaultAsync(m => m.EmployeeId == Guid.Parse(employeeId));
+            var schedule = await _context.Schedule
+                .FirstOrDefaultAsync(m => m.ScheduleId == Guid.Parse(scheduleId)); 
+
+
+
+            shift.ShiftId = Guid.NewGuid();
             shift.Employee = employee;
+            shift.Schedule = schedule;
             shift.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            _context.Add(shift);
+             _context.Add(shift);
+
+
+            //ScheduleController sc = new ScheduleController(_context);
+
+            //sc.updategg(schedule, shift);
+            
             await _context.SaveChangesAsync();
+            // this is pobably bad but yolo
+            
+
             return RedirectToAction(nameof(Index));
+        }
+        public async void updateSchedule(Schedule s, Shift shift)
+        {
+            Schedule news = s;
+            news.Shifts.Append(shift);
+
+            _context.Entry(s).CurrentValues.SetValues(news);
+            await _context.SaveChangesAsync();
         }
 
         // GET: Shift/Edit/5

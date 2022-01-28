@@ -4,17 +4,27 @@
 @{
     ViewData["Title"] = "Create";
     List<Employee> employeeList = (List<Employee>) ViewData["employeeList"];
+    List<Schedule> scheduleList = (List<Schedule>)ViewData["scheduleList"];
     //make selectList to for dropdownlist.
-     IEnumerable<SelectListItem> selectList =
-                from e in employeeList
-                select new SelectListItem
+    IEnumerable<SelectListItem> EmployeeSelectList =
+               from e in employeeList
+               select new SelectListItem
                 {
                     Selected = true,
                     Text = e.EmployeeName,
                     Value = e.EmployeeId.ToString()
 
                 };
-            
+
+    IEnumerable<SelectListItem> scheduleSelectList =
+      from a in scheduleList
+      select new SelectListItem
+              {
+                  Selected = true,
+                  Text = a.ScheduleName,
+                  Value = a.ScheduleId.ToString()
+              };
+
     
 }
 
@@ -44,9 +54,13 @@
                     https://social.msdn.microsoft.com/Forums/en-US/6894c2d6-ab14-4edd-8a9d-3b4508398f2f/get-selected-value-from-htmldropdownlistfor-in-controller?forum=aspgettingstarted
                     i could try a foreach and 
                 -->
-                @Html.DropDownListFor( model => model.Employee, selectList) 
+                @Html.DropDownListFor( model => model.Employee, EmployeeSelectList) 
               
                 
+            </div>
+            <div>
+                <b>select a scheudle</b>
+                @Html.DropDownListFor(model => model.Schedule, scheduleSelectList)
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
