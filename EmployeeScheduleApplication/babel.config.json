@@ -1,0 +1,10 @@
+{
+  "presets": [ "@babel/preset-env", "@babel/preset-react" ],
+  "plugins": [ "@babel/plugin-proposal-class-properties" ]
+}
+/**
+
+  Babel is a module mainly used to convert modern javascript into backwards compatible code. In this case, 
+  it will also provide the interface between Webpack and React.
+
+**/
