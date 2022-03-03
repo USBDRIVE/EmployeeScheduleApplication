@@ -44,23 +44,25 @@ namespace EmployeeScheduleApplication.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["schedules"] = await GetSchedules(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            //if user is notlogged in it returns nll and fails
             return View(await _context.Schedule.ToListAsync());
         }
 
         // GET: Schedule/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            //get schedule with the id that is passed in
             var schedule = await _context.Schedule
                 .FirstOrDefaultAsync(m => m.ScheduleId == id);
-            if (schedule == null)
-            {
-                return NotFound();
-            }
+
+
+            //accept list of shifts with the selected schedule 
+            //ViewData["shifts"] = await GetShifts(schedule); // shifts on schedule is null
+            //we are going to query the shifts where shifts.schedId = s.scheduId
+            var shifts = await _context.Shift
+                .Where(m => m.Schedule == schedule)
+                .ToListAsync();
+            ViewData["shifts"] = shifts;
 
             return View(schedule);
         }

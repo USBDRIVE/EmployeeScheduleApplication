@@ -98,13 +98,24 @@ namespace EmployeeScheduleApplication.Controllers
             var schedule = await _context.Schedule
                 .FirstOrDefaultAsync(m => m.ScheduleId == Guid.Parse(scheduleId)); 
 
-
+            // we need to add shift to selected Schedule
 
             shift.ShiftId = Guid.NewGuid();
             shift.Employee = employee;
             shift.Schedule = schedule;
             shift.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-             _context.Add(shift);
+            //if (schedule.Shifts == null)
+            //{
+            //    schedule.Shifts = new List<Shift>();
+            //    schedule.Shifts.Add(shift);
+            //}
+            //else
+            //{
+            //    //check is shifts is null if it is do this:
+            //    schedule.Shifts.Add(shift);
+            //}
+            // _context.Update(schedule);
+            //_context.Add(shift);
 
 
             //ScheduleController sc = new ScheduleController(_context);
@@ -117,13 +128,21 @@ namespace EmployeeScheduleApplication.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        public async void updateSchedule(Schedule s, Shift shift)
+        public void updateSchedule(Schedule s, Shift shift)
         {
-            Schedule news = s;
-            news.Shifts.Append(shift);
-
-            _context.Entry(s).CurrentValues.SetValues(news);
-            await _context.SaveChangesAsync();
+            if(s.Shifts == null)
+            {
+                s.Shifts = new List<Shift>();
+                s.Shifts.Add(shift);
+            }
+            else
+            {
+                 //check is shifts is null if it is do this:
+                 s.Shifts.Add(shift);
+            }
+           
+            //not saving changes
+            
         }
 
         // GET: Shift/Edit/5
