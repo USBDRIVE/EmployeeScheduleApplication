@@ -43,7 +43,14 @@ namespace EmployeeScheduleApplication.Controllers
         // GET: Schedule
         public async Task<IActionResult> Index()
         {
-            ViewData["schedules"] = await GetSchedules(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            if (!User.Identity.IsAuthenticated)
+            {
+                ViewData["schedules"] = null;
+            }
+            else
+            {
+                ViewData["schedules"] = await GetSchedules(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            }
             return View(await _context.Schedule.ToListAsync());
         }
 
