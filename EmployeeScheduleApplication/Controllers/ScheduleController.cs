@@ -43,17 +43,20 @@ namespace EmployeeScheduleApplication.Controllers
         // GET: Schedule
         public async Task<IActionResult> Index()
         {
-            //I should probably pass in a boolean to see it user is logged in.
-            if(User.FindFirstValue(ClaimTypes.NameIdentifier) == null)
+
+            if (!User.Identity.IsAuthenticated)
             {
-                return View();
+                ViewData["schedules"] = null;
+
+            
             }
             else
             {
                 ViewData["schedules"] = await GetSchedules(Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             }
+
+
             
-            //if user is notlogged in it returns nll and fails
             return View(await _context.Schedule.ToListAsync());
         }
 
