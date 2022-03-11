@@ -3,9 +3,11 @@
 
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EmployeeScheduleApplication.Models
 {
+    
     public  class Shift 
     {
         [Key]    

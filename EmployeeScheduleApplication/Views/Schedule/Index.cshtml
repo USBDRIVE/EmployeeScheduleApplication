@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Index";
     List<Schedule> schedules = (List<Schedule>)ViewData["schedules"];
+
     bool isLoggedIn = User.Identity.IsAuthenticated;
+
 
 }
 
@@ -12,6 +14,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
 @if (schedules != null && isLoggedIn)
 {
         <table class="table">
@@ -49,3 +52,5 @@ else
     <p>please log in</p>
 
 }
+
+
